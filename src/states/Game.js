@@ -8,47 +8,42 @@ export default class extends Phaser.State {
 
   create () {
   
-    // textov ne rabimo
-    /*
-    const bannerText = 'Phaser + ES6 + Webpack'
     
-     
-      let banner = this.add.text(this.world.centerX, this.game.height - 80, bannerText, {
-      font: '40px Bangers',
-      fill: '#77BFA3',
-      smoothed: false
-    })
-      
-
-    banner.padding.set(10, 16)
-    banner.anchor.setTo(0.5)
-    */
-
-
-    // inicializira igro za premike - za animacijo premika objekta ne rabimo 
-    // game.physics.startSystem(Phaser.Physics.ARCADE);
+    // sprites 2D array
+    var config = [
+      [0,0,0,1,0,2,1,2,2],
+      [1,2,0,1,2,0,1,1,1]
+      ];
 
 
 
-    // doda nekaj spritov gor 
-    //
-    // nisem nasel kako dodati relativne koordinate glede na width oz. height objekta
+    // spites dictionary
+    let fruits = new Map();
+    fruits.set(0, 'mushroom');
+    fruits.set(1, 'apple');
+    fruits.set(2, 'pizza');
+    
+    // draw sprites 2D array  
+    for (let i = 0; i < config.length; i++) {
+      for (let j = 0; j < config[i].length; j++) {
+        this.fruit = new Mushroom({
+          game: this.game,
+          x: 50 + j*80,
+          y: 50 + i*100,
+          asset: fruits.get(config[i][j]),
+          gridPositionX: j,
+          gridPositionY: i
+        }
+        )
 
-    for (let i = 0; i < 5; i++) {
-      this.mushroom = new Mushroom({
-        game: this.game,
-        x: 50 + i*100,                 
-        y: 50,
-        asset: 'mushroom',
+        this.game.add.existing(this.fruit);
+
+        //enabla physics na novemu objektu
+        game.physics.arcade.enable(this.fruit);
+
       }
-    )
-  
-      this.game.add.existing(this.mushroom);
-
-      //enabla physics na novemu objektu
-      game.physics.arcade.enable(this.mushroom);
-
     }
+
   }
 
 
@@ -63,4 +58,10 @@ export default class extends Phaser.State {
     */
 
   }
+
+
 }
+
+
+
+
