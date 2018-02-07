@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import WebFont from 'webfontloader'
 
+
 export default class BootState extends Phaser.State {
   // tale se klice sam od sebe
   init () {
