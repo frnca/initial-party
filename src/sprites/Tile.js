@@ -1,7 +1,8 @@
 import Phaser from 'phaser'
+import Game from '../states/Game'
 
 export default class extends Phaser.Sprite {
-  constructor ({ game, x, y, asset, gridPositionX, gridPositionY, gridName}) {
+  constructor ({ state, game, x, y, asset, gridPositionX, gridPositionY, gridName}) {
     super(game, x, y, asset, gridPositionX, gridPositionY, gridName)
     this.anchor.setTo(0.5)
    
@@ -14,12 +15,31 @@ export default class extends Phaser.Sprite {
 
     this.asset = asset;
 
+
     // ID for testing only
+    
     this.gridName = gridName;
+    this.state = state;
 
     // creates drop animation on object
     this.drop = function(){
-        this.game.add.tween(this.body).to({ y: 300 }, 200, Phaser.Easing.Linear.None, true);
+        var tween = this.game.add.tween(this.body).to({ y: 300}, 300, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(this).to({ alpha: 0}, 600, Phaser.Easing.Linear.None, true);
+        
+        // get fallen object gridpos
+        let gridX = this.gridPositionX;
+        let gridY = this.gridPositionY;
+
+        // to destroy object after drop animation
+        tween.onComplete.add(function(){
+            this.destroy();
+            }, this);
+
+        // animate add new fruit
+        tween.onComplete.add(function(){
+            state.addRandomFruit(gridX, gridY);
+            }, this);
+
     }
 
     // return object according to gridPosition
@@ -57,26 +77,15 @@ export default class extends Phaser.Sprite {
 
         // check neighbours for matching
         fruitNeighbors.forEach(element => {
-          
           if ((element.asset == obj.asset) && (obj != element) && (obj.game.world.matched.includes(element) != true)) {
             obj.game.world.matched.push(element)
             
             // find new neighbours only 
             element.checkNeighbors(element);
 
-            // alert(element.gridName);          
           };
         });
-
-        // drop animation on all array of asset matched objects  
-        if (obj.game.world.matched.length > 1) {
-            obj.game.world.matched.forEach(function(element) {
-              element.drop();
-            });
-        }
-            
     }
-   
 
 
     this.onClick = function() {
@@ -85,6 +94,17 @@ export default class extends Phaser.Sprite {
 
         // start mathing engine
         this.checkNeighbors(this);
+
+        // drop animation on all array of asset matched objects  
+        if (this.game.world.matched.length > 1) {
+            this.game.world.matched.forEach(function(element) {
+                element.drop();
+        });
+
+        
+        }
+
+
     }
 }
 

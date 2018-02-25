@@ -9,26 +9,40 @@ export default class extends Phaser.State {
 
   create () {
   
-    
-    // sprites 2D array
-    /* old config
-    config = [
-      [0,0,0,1,0,2,1,2,2],
-      [1,2,0,1,2,0,1,1,1]
-      ];
-    */
-
-    /*this.config = new Array (
-      [0,0,0,1,0,2,1,2,2], 
-      [1,2,0,1,2,0,1,1,1]
-    );
-    */
-
+    // basic config - just for testing - not used at the mement
     this.config = new Array (
       [1,0,2,1,0,1,0,1,2], 
-      [1,0,0,0,0,1,1,1,0], 
-      [1,1,1,1,2,0,1,1,1]
+      [1,0,1,0,0,1,1,2,0], 
+      [1,1,0,1,2,0,1,1,1]
     );
+
+    this.addRandomFruit = function(gridX, gridY) {
+       
+      let fruit = new Tile({
+        state: this,
+        game: this.game,
+        
+        x: 50 + gridX*80,
+        y: -50,
+        // now randomized
+        //     asset: fruits.get(this.game.config[i][j]),
+        asset: fruits.get(this.game.rnd.between(0, 2)),
+       
+        gridPositionX: gridX,
+        gridPositionY: gridY,
+        gridName: "id:" + gridX + "-" + gridY
+      }
+      )
+           
+      this.game.add.existing(fruit);
+                      
+      //enabla physics na novemu objektu
+      game.physics.arcade.enable(fruit);
+
+      fruit.game.add.tween(fruit.body).to({ y: 50 + gridY*100  }, 300, Phaser.Easing.Linear.None, true);
+
+    }
+
 
 
     // spite dictionary
@@ -37,33 +51,18 @@ export default class extends Phaser.State {
     fruits.set(1, 'apple');
     fruits.set(2, 'pizza');
     
-    //var gameBoard = game.add.group();
+    
 
     // draw sprites 2D array  
     for (let i = 0; i < this.config.length; i++) {
       for (let j = 0; j < this.config[i].length; j++) {
-
-        this.fruit = new Tile({
-          game: this.game,
-          x: 50 + j*80,
-          y: 50 + i*100,
-          asset: fruits.get(this.config[i][j]),
-          gridPositionX: j,
-          gridPositionY: i,
-          gridName: "id:" + j + "-" + i
-        }
-        )
-
-        this.game.add.existing(this.fruit);
-                
-        //enabla physics na novemu objektu
-        game.physics.arcade.enable(this.fruit);
-
+        
+        // add new sprite
+        this.addRandomFruit(j, i);
       }
     }
         
   }
-
 
 
   render () {
